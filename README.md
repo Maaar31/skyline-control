@@ -18,13 +18,13 @@
 ## ✨ Fonctionnalités
 
 ### 🎨 Graphismes Procéduraux (v1.3 Lite)
-- 🏞️ **Terrain généré procéduralement** - Chaque partie est unique
-- 🌊 **Rivières sinueuses** - Tracés naturels et organiques
-- ⛰️ **Montagnes** - Massifs avec plusieurs pics
-- 🌲 **Forêts** - Zones boisées groupées
-- 🏙️ **Villes** - Bâtiments avec lumières animées
-- ☁️ **Nuages animés** - Se déplacent en temps réel
-- 🌈 **Background amélioré** - Gradient radial avec texture
+- (🏞️ **Terrain généré procéduralement** - Chaque partie est unique)
+- (🌊 **Rivières sinueuses** - Tracés naturels et organiques)
+- (⛰️ **Montagnes** - Massifs avec plusieurs pics)
+- (🌲 **Forêts** - Zones boisées groupées)
+- (🏙️ **Villes** - Bâtiments avec lumières animées)
+- (☁️ **Nuages animés** - Se déplacent en temps réel)
+- (🌈 **Background amélioré** - Gradient radial avec texture)
 
 ### 🎮 Gameplay Core
 - 🗺️ **Carte immense** - 3000x3000 pixels avec 8 zones de sortie
