@@ -244,7 +244,7 @@ Ce projet est sous licence MIT - voir le fichier [LICENSE](LICENSE) pour plus de
 
 ## 👨‍💻 Auteur
 
-Créé avec ❤️ par [Votre Nom]
+Créé avec ❤️ par BAKENO
 
 ## 🙏 Remerciements
 
