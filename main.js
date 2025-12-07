@@ -1173,6 +1173,143 @@ document.getElementById('btn-restart').addEventListener('click', () => {
 });
 
 // ========================================
+// TUTORIAL SYSTEM
+// ========================================
+const tutorialSteps = [
+    {
+        text: "Bienvenue dans SkyLine Control! Vous êtes le contrôleur aérien. Votre mission: guider les avions en toute sécurité.",
+        highlight: null
+    },
+    {
+        text: "Cliquez sur un avion pour le sélectionner. Vous verrez ses informations dans le panneau de contrôle en bas à gauche.",
+        highlight: "control-panel"
+    },
+    {
+        text: "Une fois un avion sélectionné, cliquez sur la carte pour ajouter des waypoints (points de passage). L'avion suivra ce chemin.",
+        highlight: "gameCanvas"
+    },
+    {
+        text: "Utilisez les boutons pour changer l'altitude. Les avions à la même altitude peuvent entrer en collision!",
+        highlight: "controls"
+    },
+    {
+        text: "Utilisez la minimap pour voir toute la carte, et WASD ou clic-glisser pour déplacer la caméra. Bon vol!",
+        highlight: "minimap-container"
+    }
+];
+
+let currentTutorialStep = 0;
+
+function showTutorial() {
+    const tutorialOverlay = document.getElementById('tutorial-overlay');
+    tutorialOverlay.classList.add('active');
+    currentTutorialStep = 0;
+    updateTutorialStep();
+}
+
+function updateTutorialStep() {
+    const step = tutorialSteps[currentTutorialStep];
+    document.getElementById('tutorial-text').textContent = step.text;
+    document.getElementById('step-current').textContent = currentTutorialStep + 1;
+    document.getElementById('step-total').textContent = tutorialSteps.length;
+
+    const nextBtn = document.getElementById('btn-next-tutorial');
+    if (currentTutorialStep === tutorialSteps.length - 1) {
+        nextBtn.textContent = 'Commencer!';
+    } else {
+        nextBtn.textContent = 'Suivant';
+    }
+}
+
+function nextTutorialStep() {
+    currentTutorialStep++;
+    if (currentTutorialStep >= tutorialSteps.length) {
+        closeTutorial();
+    } else {
+        updateTutorialStep();
+    }
+}
+
+function closeTutorial() {
+    document.getElementById('tutorial-overlay').classList.remove('active');
+    // Mark tutorial as completed
+    try {
+        localStorage.setItem('skylineControlTutorialCompleted', 'true');
+    } catch (e) {
+        console.log('LocalStorage not available');
+    }
+}
+
+function checkFirstLaunch() {
+    try {
+        const tutorialCompleted = localStorage.getItem('skylineControlTutorialCompleted');
+        if (!tutorialCompleted) {
+            // Show tutorial after welcome screen is closed
+            setTimeout(() => {
+                if (!document.getElementById('welcome-modal').classList.contains('active')) {
+                    showTutorial();
+                }
+            }, 500);
+        }
+    } catch (e) {
+        console.log('LocalStorage not available');
+    }
+}
+
+// Tutorial event listeners
+document.getElementById('btn-next-tutorial').addEventListener('click', nextTutorialStep);
+document.getElementById('btn-skip-tutorial').addEventListener('click', closeTutorial);
+
+// ========================================
+// SOUND TOGGLE
+// ========================================
+function loadSoundPreference() {
+    try {
+        const soundPref = localStorage.getItem('skylineControlSoundEnabled');
+        if (soundPref !== null) {
+            gameState.soundEnabled = soundPref === 'true';
+            updateSoundButton();
+        }
+    } catch (e) {
+        console.log('LocalStorage not available');
+    }
+}
+
+function toggleSound() {
+    gameState.soundEnabled = !gameState.soundEnabled;
+    updateSoundButton();
+
+    // Save preference
+    try {
+        localStorage.setItem('skylineControlSoundEnabled', gameState.soundEnabled.toString());
+    } catch (e) {
+        console.log('LocalStorage not available');
+    }
+
+    // Play feedback sound if enabling
+    if (gameState.soundEnabled) {
+        playSound('select');
+    }
+}
+
+function updateSoundButton() {
+    const btn = document.getElementById('btn-toggle-sound');
+    if (gameState.soundEnabled) {
+        btn.textContent = '🔊';
+        btn.classList.remove('muted');
+        btn.title = 'Désactiver le son';
+    } else {
+        btn.textContent = '🔇';
+        btn.classList.add('muted');
+        btn.title = 'Activer le son';
+    }
+}
+
+document.getElementById('btn-toggle-sound').addEventListener('click', toggleSound);
+
+// ========================================
 // INITIALIZE
 // ========================================
+loadSoundPreference();
 initGame();
+checkFirstLaunch();

@@ -96,6 +96,9 @@
             <div class="help-item">🖱️ Clic-glisser: Déplacer</div>
             <div class="help-item">🔍 Molette: Zoom</div>
             <div class="help-item">⌨️ WASD: Navigation</div>
+            <button id="btn-toggle-sound" class="sound-toggle" title="Activer/Désactiver le son">
+                🔊
+            </button>
         </div>
 
         <!-- Legend -->
@@ -145,6 +148,22 @@
                 </ul>
             </div>
             <button id="btn-start" class="btn-primary">Commencer</button>
+        </div>
+    </div>
+
+    <!-- Tutorial Overlay -->
+    <div id="tutorial-overlay" class="modal">
+        <div class="tutorial-content">
+            <h2>🎓 Tutoriel SkyLine Control</h2>
+            <div id="tutorial-step" class="tutorial-step">
+                <div class="step-number">Étape <span id="step-current">1</span> / <span id="step-total">5</span></div>
+                <div id="tutorial-text" class="tutorial-text"></div>
+                <div class="tutorial-arrow" id="tutorial-arrow"></div>
+            </div>
+            <div class="tutorial-buttons">
+                <button id="btn-skip-tutorial" class="btn-secondary">Passer</button>
+                <button id="btn-next-tutorial" class="btn-primary">Suivant</button>
+            </div>
         </div>
     </div>
 
