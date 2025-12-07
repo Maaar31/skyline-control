@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkyLine Control - Air Traffic Control</title>
+    <meta name="description"
+        content="Gérez le trafic aérien et évitez les collisions dans ce jeu de contrôle aérien immersif">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <!-- Game Canvas -->
+    <canvas id="gameCanvas"></canvas>
+
+    <!-- UI Overlay -->
+    <div id="ui-overlay">
+        <!-- Top Bar -->
+        <div id="top-bar">
+            <div id="score-container">
+                <div class="label">Score</div>
+                <div id="score">0</div>
+            </div>
+            <div id="high-score-container">
+                <div class="label">Record</div>
+                <div id="high-score">0</div>
+            </div>
+            <div id="difficulty-container">
+                <div class="label">Niveau</div>
+                <div id="difficulty">1</div>
+            </div>
+            <div id="zoom-container">
+                <div class="label">Zoom</div>
+                <div id="zoom-level">100%</div>
+            </div>
+        </div>
+
+        <!-- Radio Messages -->
+        <div id="radio-container">
+            <div id="radio-header">📻 Radio</div>
+            <div id="radio-messages"></div>
+        </div>
+
+        <!-- Control Panel -->
+        <div id="control-panel">
+            <div id="selected-info">
+                <div id="no-selection">Sélectionnez un avion</div>
+                <div id="airplane-info" style="display: none;">
+                    <div class="info-row">
+                        <span class="info-label">Vol:</span>
+                        <span id="flight-id">---</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Altitude:</span>
+                        <span id="altitude-display">---</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Vitesse:</span>
+                        <span id="speed-display">---</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Statut:</span>
+                        <span id="status-display">Normal</span>
+                    </div>
+                </div>
+            </div>
+
+            <div id="controls">
+                <button id="btn-altitude-up" class="control-btn" disabled>
+                    ▲ Monter
+                </button>
+                <button id="btn-altitude-down" class="control-btn" disabled>
+                    ▼ Descendre
+                </button>
+                <button id="btn-hold" class="control-btn" disabled>
+                    ⭕ Hold
+                </button>
+                <button id="btn-clear-path" class="control-btn" disabled>
+                    🗑️ Effacer
+                </button>
+                <button id="btn-emergency-land" class="control-btn emergency-btn" disabled>
+                    🚨 Atterrissage d'urgence
+                </button>
+            </div>
+        </div>
+
+        <!-- Minimap -->
+        <div id="minimap-container">
+            <div id="minimap-header">🗺️ Carte</div>
+            <canvas id="minimap"></canvas>
+        </div>
+
+        <!-- Camera Controls Help -->
+        <div id="camera-help">
+            <div class="help-item">🖱️ Clic-glisser: Déplacer</div>
+            <div class="help-item">🔍 Molette: Zoom</div>
+            <div class="help-item">⌨️ WASD: Navigation</div>
+        </div>
+
+        <!-- Legend -->
+        <div id="legend">
+            <div class="legend-item">
+                <div class="legend-color" style="background: #4CAF50;"></div>
+                <span>Altitude Basse (0)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #FFC107;"></div>
+                <span>Altitude Moyenne (1)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #F44336;"></div>
+                <span>Altitude Haute (2)</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Game Over Modal -->
+    <div id="game-over-modal" class="modal">
+        <div class="modal-content">
+            <h1>💥 COLLISION!</h1>
+            <p id="final-score">Score Final: 0</p>
+            <p id="game-over-message">Deux avions sont entrés en collision!</p>
+            <button id="btn-restart" class="btn-primary">Recommencer</button>
+        </div>
+    </div>
+
+    <!-- Welcome Modal -->
+    <div id="welcome-modal" class="modal active">
+        <div class="modal-content">
+            <h1>✈️ SkyLine Control</h1>
+            <p>Bienvenue, contrôleur aérien!</p>
+            <div class="instructions">
+                <h3>Instructions:</h3>
+                <ul>
+                    <li>Cliquez sur un avion pour le sélectionner</li>
+                    <li>Cliquez sur la carte pour tracer sa trajectoire</li>
+                    <li>Utilisez les boutons pour changer l'altitude</li>
+                    <li>Déplacez la caméra: WASD ou clic-glisser</li>
+                    <li>Zoom: molette de la souris</li>
+                    <li>Évitez les collisions entre avions!</li>
+                    <li>Les avions à la même altitude peuvent entrer en collision</li>
+                    <li>Guidez les avions vers leurs destinations</li>
+                    <li>Utilisez l'atterrissage d'urgence pour les pannes</li>
+                </ul>
+            </div>
+            <button id="btn-start" class="btn-primary">Commencer</button>
+        </div>
+    </div>
+
+    <script src="main.js"></script>
+</body>
+
+</html>
