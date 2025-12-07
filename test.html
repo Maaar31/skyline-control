@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Test Boutons</title>
+</head>
+
+<body>
+    <h1>Test des boutons</h1>
+    <button id="test-btn">Cliquez-moi</button>
+    <div id="output"></div>
+
+    <script>
+        console.log('Script chargé');
+
+        document.getElementById('test-btn').addEventListener('click', function () {
+            console.log('Bouton cliqué!');
+            document.getElementById('output').textContent = 'Bouton fonctionne!';
+        });
+
+        console.log('Event listener ajouté');
+    </script>
+</body>
+
+</html>

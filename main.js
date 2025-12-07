@@ -510,6 +510,393 @@ function initGame() {
         height: 20
     };
 
+    // Initialize MapGraphics (v1.3 Lite)
+    if (!window.mapGraphics && window.MapGraphics) {
+        window.mapGraphics = new MapGraphics(ctx, MAP_SIZE);
+    }
+
+    // Center camera on map
+    camera.x = MAP_SIZE / 2 - canvas.width / 2;
+    camera.y = MAP_SIZE / 2 - canvas.height / 2;
+    camera.zoom = 1.0;
+
+    // Clear radio
+    document.getElementById('radio-messages').innerHTML = '';
+    addRadioMessage('Tour de contrôle opérationnelle. Bon vol!');
+
+    updateUI();
+}
+
+// ========================================
+// SPAWNING
+// ========================================
+function spawnAirplane() {
+    // Random spawn edge of larger map
+    const edge = Math.floor(Math.random() * 4);
+    let x, y;
+
+    switch (edge) {
+        case 0: // Top
+            x = Math.random() * MAP_SIZE;
+            y = 0;
+            break;
+        case 1: // Right
+            x = MAP_SIZE;
+            y = Math.random() * MAP_SIZE;
+            break;
+        case 2: // Bottom
+            x = Math.random() * MAP_SIZE;
+            y = MAP_SIZE;
+            break;
+        case 3: // Left
+            x = 0;
+            y = Math.random() * MAP_SIZE;
+            break;
+    }
+
+    // Random altitude
+    const altitude = Math.floor(Math.random() * 3);
+
+    // Random destination (exit zone or landing strip)
+    let destination;
+    if (Math.random() < 0.3) {
+        // Landing strip
+        destination = {
+            x: gameState.landingStrip.x,
+            y: gameState.landingStrip.y
+        };
+    } else {
+        // Exit zone
+        const exitZone = gameState.exitZones[Math.floor(Math.random() * gameState.exitZones.length)];
+        destination = { x: exitZone.x, y: exitZone.y };
+    }
+
+    const airplane = new Airplane(x, y, altitude, destination);
+    gameState.airplanes.push(airplane);
+
+    // Radio message
+    const messages = RADIO_MESSAGES.spawn;
+    addRadioMessage(messages[Math.floor(Math.random() * messages.length)].replace('{id}', airplane.id));
+
+    // Random emergency chance (15% for larger map)
+    if (Math.random() < 0.15) {
+        setTimeout(() => {
+            if (gameState.airplanes.includes(airplane)) {
+                airplane.triggerEmergency();
+            }
+        }, 3000 + Math.random() * 5000);
+    }
+}
+
+// ========================================
+// COLLISION DETECTION
+// ========================================
+function checkCollisions() {
+    for (let i = 0; i < gameState.airplanes.length; i++) {
+        for (let j = i + 1; j < gameState.airplanes.length; j++) {
+            const a1 = gameState.airplanes[i];
+            const a2 = gameState.airplanes[j];
+
+            // Only collide if at same altitude
+            if (a1.altitude === a2.altitude) {
+                const dx = a1.x - a2.x;
+                const dy = a1.y - a2.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+
+                if (distance < COLLISION_DISTANCE) {
+                    gameOver(`Collision entre ${a1.id} et ${a2.id}!`);
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
+}
+
+// ========================================
+// CAMERA FUNCTIONS
+// ========================================
+function updateCamera(deltaTime) {
+    const cameraSpeed = 5;
+
+    // WASD movement
+    if (keys.w) camera.y -= cameraSpeed;
+    if (keys.s) camera.y += cameraSpeed;
+    if (keys.a) camera.x -= cameraSpeed;
+    if (keys.d) camera.x += cameraSpeed;
+
+    // Constrain camera to map bounds
+    const maxX = MAP_SIZE - canvas.width / camera.zoom;
+    const maxY = MAP_SIZE - canvas.height / camera.zoom;
+
+    camera.x = Math.max(0, Math.min(camera.x, maxX));
+    camera.y = Math.max(0, Math.min(camera.y, maxY));
+}
+
+function screenToWorld(screenX, screenY) {
+    return {
+        x: (screenX / camera.zoom) + camera.x,
+        y: (screenY / camera.zoom) + camera.y
+    };
+}
+
+function worldToScreen(worldX, worldY) {
+    return {
+        x: (worldX - camera.x) * camera.zoom,
+        y: (worldY - camera.y) * camera.zoom
+    };
+}
+
+function applyCamera() {
+    ctx.save();
+    ctx.scale(camera.zoom, camera.zoom);
+    ctx.translate(-camera.x, -camera.y);
+}
+
+function resetCamera() {
+    ctx.restore();
+}
+
+// ========================================
+// GAME LOOP
+// ========================================
+function gameLoop(currentTime) {
+    if (!gameState.running) return;
+
+    const deltaTime = currentTime - gameState.lastTime;
+    gameState.lastTime = currentTime;
+
+    // Update camera
+    updateCamera(deltaTime);
+
+    // Clear canvas
+    ctx.fillStyle = '#0d1117';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Apply camera transform
+    applyCamera();
+
+    // Draw grid
+    drawGrid();
+
+    // Draw exit zones
+    drawExitZones();
+
+    // Draw landing strip
+    drawLandingStrip();
+
+    // Update and draw airplanes
+    for (let i = gameState.airplanes.length - 1; i >= 0; i--) {
+        const airplane = gameState.airplanes[i];
+        const result = airplane.update(deltaTime);
+
+        if (result === 'reached') {
+            // Airplane reached destination
+            gameState.airplanes.splice(i, 1);
+
+            // Bonus points for emergency landing
+            if (airplane.emergency) {
+                gameState.score += 20;
+                addRadioMessage(`✅ Atterrissage d'urgence réussi pour ${airplane.id}! +20 points`);
+            } else {
+                gameState.score += 10;
+            }
+
+            // Check if landing or exit
+            const distToLanding = Math.sqrt(
+                (airplane.x - gameState.landingStrip.x) ** 2 +
+                (airplane.y - gameState.landingStrip.y) ** 2
+            );
+
+            if (distToLanding < 50) {
+                const messages = RADIO_MESSAGES.landing;
+                addRadioMessage(messages[Math.floor(Math.random() * messages.length)].replace('{id}', airplane.id));
+            } else {
+                const messages = RADIO_MESSAGES.exit;
+                addRadioMessage(messages[Math.floor(Math.random() * messages.length)].replace('{id}', airplane.id));
+            }
+
+            // Deselect if selected
+            if (gameState.selectedAirplane === airplane) {
+                gameState.selectedAirplane = null;
+            }
+
+            updateUI();
+        } else {
+            airplane.draw();
+        }
+    }
+
+    // Reset camera transform
+    resetCamera();
+
+    // Check collisions
+    if (checkCollisions()) {
+        return;
+    }
+
+    // Spawn new airplanes
+    gameState.spawnTimer += deltaTime;
+    if (gameState.spawnTimer >= gameState.spawnInterval) {
+        spawnAirplane();
+        gameState.spawnTimer = 0;
+
+        // Increase difficulty
+        if (gameState.score > 0 && gameState.score % 50 === 0) {
+            gameState.difficulty++;
+            gameState.spawnInterval = Math.max(2000, gameState.spawnInterval - 200);
+            addRadioMessage(`Niveau de difficulté augmenté: ${gameState.difficulty}`);
+        }
+    }
+
+    // Draw minimap
+    drawMinimap();
+
+    updateUI();
+    requestAnimationFrame(gameLoop);
+}
+
+// ========================================
+// DRAWING HELPERS
+// ========================================
+function drawGrid() {
+    // Enhanced background with terrain (v1.3 Lite)
+    if (window.mapGraphics) {
+        mapGraphics.drawAll(performance.now());
+    }
+
+    // Grid lines
+    ctx.strokeStyle = 'rgba(100, 200, 255, 0.1)';
+    ctx.lineWidth = 1 / camera.zoom;
+
+    const gridSize = 100;
+
+    const startX = Math.floor(camera.x / gridSize) * gridSize;
+    const endX = camera.x + canvas.width / camera.zoom;
+    const startY = Math.floor(camera.y / gridSize) * gridSize;
+    const endY = camera.y + canvas.height / camera.zoom;
+
+    for (let x = startX; x <= endX; x += gridSize) {
+        ctx.beginPath();
+        ctx.moveTo(x, camera.y);
+        ctx.lineTo(x, endY);
+        ctx.stroke();
+    }
+
+    for (let y = startY; y <= endY; y += gridSize) {
+        ctx.beginPath();
+        ctx.moveTo(camera.x, y);
+        ctx.lineTo(endX, y);
+        ctx.stroke();
+    }
+
+    // Draw map bounds
+    ctx.strokeStyle = 'rgba(255, 100, 100, 0.5)';
+    ctx.lineWidth = 3 / camera.zoom;
+    ctx.strokeRect(0, 0, MAP_SIZE, MAP_SIZE);
+}
+
+function drawExitZones() {
+    gameState.exitZones.forEach(zone => {
+        ctx.fillStyle = 'rgba(100, 200, 255, 0.2)';
+        ctx.strokeStyle = 'rgba(100, 200, 255, 0.6)';
+        ctx.lineWidth = 2;
+
+        ctx.beginPath();
+        ctx.arc(zone.x, zone.y, 30, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = '#64b5f6';
+        ctx.font = 'bold 16px Orbitron';
+        ctx.textAlign = 'center';
+        ctx.fillText(zone.label, zone.x, zone.y + 5);
+    });
+}
+
+function playSound(soundName) {
+    if (!gameState.soundEnabled) return;
+
+    switch (soundName) {
+        case 'select':
+            createBeep(800, 0.1);
+            break;
+        case 'waypoint':
+            createBeep(600, 0.05);
+            break;
+        case 'emergency':
+            createBeep(400, 0.3, 'square');
+            setTimeout(() => createBeep(400, 0.3, 'square'), 400);
+            break;
+        case 'collision':
+            createBeep(200, 0.5, 'sawtooth');
+            break;
+        case 'landing':
+            createBeep(1000, 0.1);
+            setTimeout(() => createBeep(1200, 0.15), 150);
+            break;
+    }
+}
+
+// ========================================
+// HIGH SCORE MANAGEMENT
+// ========================================
+function loadHighScore() {
+    try {
+        const saved = localStorage.getItem('skylineControlHighScore');
+        if (saved) {
+            gameState.highScore = parseInt(saved, 10);
+        }
+    } catch (e) {
+        console.log('LocalStorage not available');
+    }
+}
+
+function saveHighScore() {
+    try {
+        if (gameState.score > gameState.highScore) {
+            gameState.highScore = gameState.score;
+            localStorage.setItem('skylineControlHighScore', gameState.highScore.toString());
+            return true; // New high score!
+        }
+    } catch (e) {
+        console.log('LocalStorage not available');
+    }
+    return false;
+}
+
+
+// ========================================
+// GAME INITIALIZATION
+// ========================================
+function initGame() {
+    gameState.airplanes = [];
+    gameState.selectedAirplane = null;
+    gameState.score = 0;
+    gameState.difficulty = 1;
+    gameState.spawnTimer = 0;
+    gameState.nextFlightNumber = 1;
+
+    // Create exit zones (8 zones around larger map)
+    gameState.exitZones = [
+        { x: MAP_SIZE * 0.5, y: 100, label: 'N' },
+        { x: MAP_SIZE - 100, y: MAP_SIZE * 0.25, label: 'NE' },
+        { x: MAP_SIZE - 100, y: MAP_SIZE * 0.5, label: 'E' },
+        { x: MAP_SIZE - 100, y: MAP_SIZE * 0.75, label: 'SE' },
+        { x: MAP_SIZE * 0.5, y: MAP_SIZE - 100, label: 'S' },
+        { x: 100, y: MAP_SIZE * 0.75, label: 'SW' },
+        { x: 100, y: MAP_SIZE * 0.5, label: 'W' },
+        { x: 100, y: MAP_SIZE * 0.25, label: 'NW' }
+    ];
+
+    // Create landing strip (center of map)
+    gameState.landingStrip = {
+        x: MAP_SIZE / 2,
+        y: MAP_SIZE / 2,
+        width: 100,
+        height: 20
+    };
+
     // Center camera on map
     camera.x = MAP_SIZE / 2 - canvas.width / 2;
     camera.y = MAP_SIZE / 2 - canvas.height / 2;
