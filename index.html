@@ -8,6 +8,7 @@
     <meta name="description"
         content="Gérez le trafic aérien et évitez les collisions dans ce jeu de contrôle aérien immersif">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="v1.2-styles.css">
 </head>
 
 <body>
@@ -33,6 +34,10 @@
             <div id="zoom-container">
                 <div class="label">Zoom</div>
                 <div id="zoom-level">100%</div>
+            </div>
+            <div class="top-bar-buttons">
+                <button id="btn-settings" class="icon-btn" title="Paramètres">⚙️</button>
+                <button id="btn-leaderboard" class="icon-btn" title="Classement">🏆</button>
             </div>
         </div>
 
@@ -167,6 +172,130 @@
         </div>
     </div>
 
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="modal">
+        <div class="modal-content settings-content">
+            <h2>⚙️ Paramètres</h2>
+            <div class="settings-tabs">
+                <button class="tab-btn active" data-tab="hud">HUD</button>
+                <button class="tab-btn" data-tab="audio">Audio</button>
+                <button class="tab-btn" data-tab="gameplay">Gameplay</button>
+                <button class="tab-btn" data-tab="camera">Caméra</button>
+            </div>
+
+            <!-- HUD Tab -->
+            <div class="tab-content active" id="tab-hud">
+                <div class="setting-group">
+                    <label><input type="checkbox" id="set-show-score" checked> Afficher Score</label>
+                    <label><input type="checkbox" id="set-show-highscore" checked> Afficher Record</label>
+                    <label><input type="checkbox" id="set-show-difficulty" checked> Afficher Niveau</label>
+                    <label><input type="checkbox" id="set-show-zoom" checked> Afficher Zoom</label>
+                    <label><input type="checkbox" id="set-show-minimap" checked> Afficher Minimap</label>
+                    <label><input type="checkbox" id="set-show-radio" checked> Afficher Radio</label>
+                    <label><input type="checkbox" id="set-show-legend" checked> Afficher Légende</label>
+                </div>
+                <div class="setting-group">
+                    <label>Opacité panneaux: <span id="opacity-value">90</span>%</label>
+                    <input type="range" id="set-panel-opacity" min="50" max="100" value="90">
+                </div>
+            </div>
+
+            <!-- Audio Tab -->
+            <div class="tab-content" id="tab-audio">
+                <div class="setting-group">
+                    <label>Volume général: <span id="master-volume-value">100</span>%</label>
+                    <input type="range" id="set-master-volume" min="0" max="100" value="100">
+                    <label>Volume effets: <span id="effects-volume-value">100</span>%</label>
+                    <input type="range" id="set-effects-volume" min="0" max="100" value="100">
+                    <label>Volume ambiance: <span id="ambiance-volume-value">50</span>%</label>
+                    <input type="range" id="set-ambiance-volume" min="0" max="100" value="50">
+                </div>
+            </div>
+
+            <!-- Gameplay Tab -->
+            <div class="tab-content" id="tab-gameplay">
+                <div class="setting-group">
+                    <label>Difficulté de départ: <span id="start-diff-value">1</span></label>
+                    <input type="range" id="set-start-difficulty" min="1" max="5" value="1">
+                    <label>Vitesse de jeu: <span id="game-speed-value">1.0</span>x</label>
+                    <input type="range" id="set-game-speed" min="50" max="200" value="100" step="10">
+                    <label>Avions max: <span id="max-planes-value">15</span></label>
+                    <input type="range" id="set-max-planes" min="5" max="20" value="15">
+                    <label>Taux d'urgences: <span id="emergency-rate-value">15</span>%</label>
+                    <input type="range" id="set-emergency-rate" min="0" max="50" value="15">
+                </div>
+            </div>
+
+            <!-- Camera Tab -->
+            <div class="tab-content" id="tab-camera">
+                <div class="setting-group">
+                    <label>Vitesse déplacement: <span id="move-speed-value">5</span></label>
+                    <input type="range" id="set-move-speed" min="1" max="10" value="5">
+                    <label>Sensibilité zoom: <span id="zoom-sens-value">0.1</span></label>
+                    <input type="range" id="set-zoom-sensitivity" min="5" max="20" value="10">
+                    <label><input type="checkbox" id="set-invert-zoom"> Inverser zoom molette</label>
+                </div>
+            </div>
+
+            <div class="modal-buttons">
+                <button id="btn-reset-settings" class="btn-secondary">Réinitialiser</button>
+                <button id="btn-close-settings" class="btn-primary">Fermer</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Leaderboard Modal -->
+    <div id="leaderboard-modal" class="modal">
+        <div class="modal-content leaderboard-content">
+            <h2>🏆 Classement</h2>
+            <div id="leaderboard-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Nom</th>
+                            <th>Score</th>
+                            <th>Niveau</th>
+                            <th>Avions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leaderboard-body">
+                        <tr>
+                            <td colspan="5">Aucun score enregistré</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="stats-summary">
+                <h3>Statistiques globales</h3>
+                <div class="stat-item">Total avions gérés: <span id="total-planes">0</span></div>
+                <div class="stat-item">Total urgences résolues: <span id="total-emergencies">0</span></div>
+                <div class="stat-item">Temps de jeu total: <span id="total-playtime">0h 0m</span></div>
+            </div>
+            <div class="modal-buttons">
+                <button id="btn-clear-leaderboard" class="btn-secondary">Effacer</button>
+                <button id="btn-close-leaderboard" class="btn-primary">Fermer</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Name Input Modal (after game over) -->
+    <div id="name-input-modal" class="modal">
+        <div class="modal-content name-input-content">
+            <h2>🎉 Nouveau score!</h2>
+            <p>Vous avez obtenu <span id="final-score-display">0</span> points!</p>
+            <div class="name-input-group">
+                <label>Entrez votre nom:</label>
+                <input type="text" id="player-name-input" maxlength="15" placeholder="Votre nom">
+            </div>
+            <div class="modal-buttons">
+                <button id="btn-skip-name" class="btn-secondary">Passer</button>
+                <button id="btn-submit-score" class="btn-primary">Enregistrer</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="v1.2-features.js"></script>
     <script src="main.js"></script>
 </body>
 
