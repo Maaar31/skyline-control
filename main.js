@@ -1404,10 +1404,17 @@ canvas.addEventListener('mousedown', (e) => {
     }
 
     if (clickedAirplane) {
-        // Select airplane
-        gameState.selectedAirplane = clickedAirplane;
-        playSound('select');
-        updateUI();
+        // If clicking on already selected airplane, deselect it
+        if (gameState.selectedAirplane === clickedAirplane) {
+            gameState.selectedAirplane = null;
+            addRadioMessage(`Vol ${clickedAirplane.id} désélectionné`);
+            updateUI();
+        } else {
+            // Select new airplane
+            gameState.selectedAirplane = clickedAirplane;
+            playSound('select');
+            updateUI();
+        }
     } else if (gameState.selectedAirplane) {
         // Add waypoint
         gameState.selectedAirplane.addWaypoint(world.x, world.y);
@@ -1480,8 +1487,29 @@ canvas.addEventListener('wheel', (e) => {
 window.addEventListener('keydown', (e) => {
     const key = e.key.toLowerCase();
 
-    // Pause toggle
-    if (key === ' ' || key === 'escape') {
+    // Escape key: deselect airplane or pause
+    if (key === 'escape') {
+        e.preventDefault();
+        if (gameState.selectedAirplane) {
+            // Deselect airplane
+            const airplaneId = gameState.selectedAirplane.id;
+            gameState.selectedAirplane = null;
+            addRadioMessage(`Vol ${airplaneId} désélectionné`);
+            updateUI();
+        } else if (gameState.running) {
+            // Pause game
+            gameState.paused = !gameState.paused;
+            if (gameState.paused) {
+                addRadioMessage('⏸️ Jeu en pause');
+            } else {
+                addRadioMessage('▶️ Jeu repris');
+            }
+        }
+        return;
+    }
+
+    // Space key: pause toggle
+    if (key === ' ') {
         e.preventDefault();
         if (gameState.running) {
             gameState.paused = !gameState.paused;

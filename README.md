@@ -1,29 +1,56 @@
 # ✈️ SkyLine Control
 
-> Un jeu de contrôle aérien 2D immersif où vous gérez le trafic aérien pour éviter les collisions
+> Un jeu de contrôle aérien 2D immersif avec terrain procédural et graphismes améliorés
 
 [![Démo Live](https://img.shields.io/badge/Démo-Live-success?style=for-the-badge)](https://github.com/votre-username/skyline-control)
 [![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)](LICENSE)
 [![HTML5](https://img.shields.io/badge/HTML5-Canvas-orange?style=for-the-badge&logo=html5)](https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API)
+[![Version](https://img.shields.io/badge/Version-1.3.0--lite-brightgreen?style=for-the-badge)](https://github.com/votre-username/skyline-control/releases)
 
 ![SkyLine Control Gameplay](screenshot.png)
 
 ## 🎮 À propos
 
-SkyLine Control est un jeu de simulation de contrôle aérien où vous incarnez un contrôleur aérien gérant une carte de 3000x3000 pixels. Guidez les avions vers leurs destinations, gérez les urgences, et évitez les collisions catastrophiques!
+**SkyLine Control** est un simulateur de contrôle aérien où vous gérez le trafic d'avions pour éviter les collisions. Guidez les avions vers leurs destinations en traçant des trajectoires, en gérant les altitudes et en répondant aux urgences. 
 
-### ✨ Fonctionnalités principales
+**Nouveau dans v1.3 Lite:** Terrain procédural vivant avec rivières, montagnes, forêts, villes et nuages animés!
 
-- 🗺️ **Carte immense**: Explorez une carte 3000x3000 avec 8 zones de sortie
-- 📹 **Système de caméra**: Pan (WASD/clic-glisser) et zoom (50%-200%)
-- 🎯 **Gestion de trajectoires**: Système de waypoints par clic
-- 🚨 **Urgences**: Carburant faible, pannes moteur avec commande d'atterrissage d'urgence
-- 📊 **Minimap**: Vue d'ensemble temps réel de tous les avions
-- 🎚️ **3 altitudes**: Évitez les collisions en gérant les niveaux de vol
-- 📈 **Difficulté progressive**: Le jeu s'intensifie avec votre score
-- 💾 **High score**: Votre meilleur score est sauvegardé
-- 🔊 **Effets sonores**: Audio immersif pour toutes les actions
-- ⏸️ **Pause**: Mettez le jeu en pause avec Espace
+## ✨ Fonctionnalités
+
+### 🎨 Graphismes Procéduraux (v1.3 Lite)
+- 🏞️ **Terrain généré procéduralement** - Chaque partie est unique
+- 🌊 **Rivières sinueuses** - Tracés naturels et organiques
+- ⛰️ **Montagnes** - Massifs avec plusieurs pics
+- 🌲 **Forêts** - Zones boisées groupées
+- 🏙️ **Villes** - Bâtiments avec lumières animées
+- ☁️ **Nuages animés** - Se déplacent en temps réel
+- 🌈 **Background amélioré** - Gradient radial avec texture
+
+### 🎮 Gameplay Core
+- 🗺️ **Carte immense** - 3000x3000 pixels avec 8 zones de sortie
+- 📹 **Système de caméra** - Pan (WASD/clic-glisser) et zoom (50%-200%)
+- 🎯 **Gestion de trajectoires** - Système de waypoints par clic
+- ✨ **Désélection d'avions** - Cliquez sur avion sélectionné ou Escape (v1.3)
+- 🚨 **Urgences** - Carburant faible, pannes moteur
+- 📊 **Minimap** - Vue d'ensemble temps réel
+- 🎚️ **3 altitudes** - FL0 (vert), FL1 (jaune), FL2 (rouge)
+- 📈 **Difficulté progressive** - S'intensifie avec le score
+
+### 🎛️ Système de Paramètres (v1.2a)
+- **HUD** - Personnalisation complète de l'interface
+- **Audio** - Volumes indépendants (master, effets, ambiance)
+- **Gameplay** - Difficulté, vitesse, nombre d'avions
+- **Caméra** - Vitesse, sensibilité zoom, inversion
+
+### 🏆 Leaderboard (v1.2a)
+- **Top 10** - Meilleurs scores avec nom, niveau, avions gérés
+- **Statistiques globales** - Total avions, urgences, temps de jeu
+- **Sauvegarde locale** - Persistance via localStorage
+
+### 🎓 Tutoriel Interactif (v1.1)
+- **5 étapes guidées** - Apprendre les bases
+- **Highlights visuels** - Éléments mis en évidence
+- **Sauvegarde progression** - Ne s'affiche qu'une fois
 
 ## 🚀 Démarrage rapide
 
@@ -60,12 +87,16 @@ Jouez directement dans votre navigateur: [Démo Live](https://votre-username.git
 | Action | Contrôle |
 |--------|----------|
 | Sélectionner avion | Clic sur l'avion |
-| Ajouter waypoint | Clic sur la carte |
-| Monter altitude | Bouton ▲ ou sélection + clic |
+| Désélectionner avion | Clic sur avion sélectionné OU Escape |
+| Ajouter waypoint | Clic sur la carte (avion sélectionné) |
+| Monter altitude | Bouton ▲ |
 | Descendre altitude | Bouton ▼ |
 | Hold pattern | Bouton ⭕ |
+| Effacer route | Bouton 🗑️ |
 | Atterrissage urgence | Bouton 🚨 (urgences uniquement) |
 | Pause | Espace |
+| Paramètres | Bouton ⚙️ |
+| Leaderboard | Bouton 🏆 |
 
 ### Navigation caméra
 
@@ -96,22 +127,20 @@ Jouez directement dans votre navigateur: [Démo Live](https://votre-username.git
 - **HTML5 Canvas** - Rendu 2D haute performance
 - **Vanilla JavaScript (ES6+)** - Aucun framework, code pur
 - **CSS3** - Glassmorphism et animations modernes
-- **LocalStorage API** - Sauvegarde du high score
-- **Web Audio API** - Effets sonores immersifs
+- **LocalStorage API** - Sauvegarde scores et paramètres
+- **Web Audio API** - Effets sonores procéduraux
 
 ## 📁 Structure du projet
 
 ```
 skyline-control/
 ├── index.html          # Structure HTML et UI
-├── style.css           # Styles modernes avec glassmorphism
-├── main.js             # Moteur de jeu et logique
-├── sounds/             # Effets sonores
-│   ├── select.mp3
-│   ├── waypoint.mp3
-│   ├── emergency.mp3
-│   ├── collision.mp3
-│   └── landing.mp3
+├── style.css           # Styles de base
+├── v1.2-styles.css     # Styles settings/leaderboard
+├── main.js             # Moteur de jeu principal
+├── v1.2-features.js    # Settings et leaderboard
+├── v1.3-graphics.js    # Génération terrain procédural
+├── v1.3-audio.js       # AudioMixer avancé (non intégré)
 ├── README.md           # Ce fichier
 ├── LICENSE             # Licence MIT
 └── .gitignore          # Fichiers ignorés par Git
@@ -119,11 +148,11 @@ skyline-control/
 
 ## 🎨 Captures d'écran
 
+### Terrain Procédural v1.3 Lite
+![Terrain amélioré](screenshot-terrain.png)
+
 ### Vue d'ensemble avec minimap
 ![Gameplay avec minimap](screenshot-minimap.png)
-
-### Zoom arrière (50%)
-![Vue dézoomée](screenshot-zoom-out.png)
 
 ### Gestion d'urgence
 ![Atterrissage d'urgence](screenshot-emergency.png)
@@ -147,6 +176,39 @@ skyline-control/
 - Plus d'urgences à haute difficulté
 - Intervalle minimum de 2 secondes entre apparitions
 
+### Génération Procédurale
+- **Rivières**: 3-5 par carte, tracés sinueux
+- **Montagnes**: 8-12 massifs, 24-84 pics
+- **Forêts**: 12-20 zones, 60-300 arbres
+- **Villes**: 5-10 zones, 20-100 bâtiments
+- **Nuages**: 15-25 éléments animés
+
+## 📝 Versions
+
+### v1.3.0-lite (Actuelle)
+- ✨ Terrain procédural avec rivières, montagnes, forêts, villes
+- ✨ Nuages animés en temps réel
+- ✨ Désélection d'avions (clic + Escape)
+- 🐛 Correction bugs critiques (drawExitZones, classe dupliquée)
+- 📚 Documentation complète
+
+### v1.2a
+- ⚙️ Système de paramètres complet (4 onglets)
+- 🏆 Leaderboard avec top 10 et stats globales
+- 📊 Statistiques de session
+- 💾 Sauvegarde localStorage
+
+### v1.1
+- 🎓 Tutoriel interactif (5 étapes)
+- 🔊 Toggle son avec bouton
+- 📖 Documentation améliorée
+
+### v1.0
+- 🎮 Jeu de base fonctionnel
+- 🗺️ Carte 3000x3000
+- 🚨 Système d'urgences
+- 💾 High score
+
 ## 🤝 Contribution
 
 Les contributions sont les bienvenues! N'hésitez pas à:
@@ -159,12 +221,22 @@ Les contributions sont les bienvenues! N'hésitez pas à:
 
 ## 📝 Roadmap
 
+### v1.3 Full (Prochain)
+- [ ] Intégration audio complète (AudioMixer)
+- [ ] Ambient radar loop
+- [ ] Sons ADSR avec harmoniques
+
+### v1.4 (Futur)
+- [ ] Mode jour/nuit
+- [ ] Météo dynamique (pluie, brouillard)
+- [ ] Saisons
+- [ ] Achievements
+
+### v2.0 (Vision)
 - [ ] Mode multijoueur coopératif
-- [ ] Modes de jeu alternatifs (Zen, Hardcore, Campagne)
-- [ ] Achievements et statistiques détaillées
-- [ ] Thèmes visuels (jour/nuit, rétro)
-- [ ] Tutoriel interactif
+- [ ] Campagne avec missions
 - [ ] Leaderboard en ligne
+- [ ] Replay système
 
 ## 📄 Licence
 
@@ -179,6 +251,7 @@ Créé avec ❤️ par [Votre Nom]
 - Inspiré par les jeux de simulation ATC classiques
 - Polices: [Google Fonts](https://fonts.google.com/) (Orbitron, Rajdhani)
 - Icônes: Emojis Unicode
+- Communauté de testeurs pour les retours précieux
 
 ---
 
